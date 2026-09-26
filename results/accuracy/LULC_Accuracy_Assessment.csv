@@ -1,0 +1,3 @@
+Year,Validation_Type,Sample_Size,Training_Samples,Validation_Samples,Overall_Accuracy,Kappa
+2023,Holdout,1271,1035,236,0.9703389831,0.9622770762
+2024,Holdout,1271,1004,267,0.9812734082,0.9758160936
