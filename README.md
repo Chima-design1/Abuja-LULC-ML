@@ -126,18 +126,42 @@ Abuja-LULC-ML/
 ├── README.md
 ├── gee/
 │   └── Abuja_LULC_Classification.js
-└── results/
-    ├── accuracy/
-    │   ├── README.md
-    │   └── LULC_Accuracy_Assessment.csv
-    ├── area_statistics/
-    │   ├── README.md
-    │   └── LULC_Area_Statistics.csv
-    └── transition_matrix/
-        ├── README.md
-        ├── LULC_Transition_Matrix_2023_2024.csv
-        └── LULC_Transition_Probabilities_2023_2024.csv
+├── maps/
+│   ├── LULC_2023/
+│   ├── LULC_2024/
+│   ├── change_detection/
+│   ├── transition_analysis/
+│   └── prediction_2026/
+├── results/
+│   ├── accuracy/
+│   ├── area_statistics/
+│   └── transition_matrix/
+└── documentation/
+    ├── PROJECT_OVERVIEW.md
+    ├── METHODOLOGY.md
+    ├── MAPS_AND_DATA.md
+    └── RESULTS_INTERPRETATION.md
 ```
+
+## Documentation
+
+- [Project overview](documentation/PROJECT_OVERVIEW.md)
+- [Methodology](documentation/METHODOLOGY.md)
+- [Maps and data products](documentation/MAPS_AND_DATA.md)
+- [Results interpretation](documentation/RESULTS_INTERPRETATION.md)
+- [Google Earth Engine workflow](gee/Abuja_LULC_Classification.js)
+
+## Map Outputs
+
+The repository is organized to contain five principal GeoTIFF outputs:
+
+1. 2023 LULC classification
+2. 2024 LULC classification
+3. 2023–2024 change detection
+4. 2023–2024 transition analysis
+5. 2026 baseline prediction
+
+The exported rasters should be stored in the corresponding subdirectories under `maps/`.
 
 ## Limitations
 
