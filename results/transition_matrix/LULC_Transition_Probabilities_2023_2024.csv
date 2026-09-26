@@ -1,0 +1,26 @@
+from_class_code,from_class_name,to_class_code,to_class_name,transition_probability
+0,Built-up,0,Built-up,0.8394893334
+0,Built-up,1,Vegetation,0.0029926207
+0,Built-up,2,Bare land,0.1084936535
+0,Built-up,3,Water,0.0002730105
+0,Built-up,4,Cropland,0.0487508662
+1,Vegetation,0,Built-up,0.0115274940
+1,Vegetation,1,Vegetation,0.7308355657
+1,Vegetation,2,Bare land,0.0120768531
+1,Vegetation,3,Water,0.0025557614
+1,Vegetation,4,Cropland,0.2430043258
+2,Bare land,0,Built-up,0.5325646489
+2,Bare land,1,Vegetation,0.0165114122
+2,Bare land,2,Bare land,0.2390237556
+2,Bare land,3,Water,0.0000103341
+2,Bare land,4,Cropland,0.2118899148
+3,Water,0,Built-up,0.0250544360
+3,Water,1,Vegetation,0.0096876980
+3,Water,2,Bare land,0.0003499789
+3,Water,3,Water,0.9541258551
+3,Water,4,Cropland,0.0107820320
+4,Cropland,0,Built-up,0.0641982050
+4,Cropland,1,Vegetation,0.2480978442
+4,Cropland,2,Bare land,0.0153476874
+4,Cropland,3,Water,0.0023762762
+4,Cropland,4,Cropland,0.6699799872
