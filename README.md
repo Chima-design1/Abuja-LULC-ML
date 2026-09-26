@@ -1,4 +1,3 @@
-
 # Abuja-LULC-ML
 
 ## Spatiotemporal Analysis and Machine Learning-Based Prediction of Land Use/Land Cover Change in Abuja, Nigeria Using Sentinel-2 Data
@@ -7,30 +6,22 @@
 
 This project investigates land use and land cover (LULC) patterns and changes in Abuja, Nigeria, using Sentinel-2 satellite imagery, Geographic Information Systems (GIS), remote sensing, and machine learning.
 
-The study analyzes land cover classifications for 2023 and 2024, identifies spatial changes between the two periods, and develops an exploratory baseline approach for estimating future land cover patterns.
-
-The project demonstrates the application of geospatial data science and machine learning to environmental monitoring, urban expansion analysis, and land management.
+The study classifies land cover for 2023 and 2024, assesses classification accuracy, quantifies class areas, analyzes LULC transitions, and develops exploratory approaches for modeling future land-cover patterns.
 
 ## Research Objectives
 
-The main objectives of this project are to:
-
 1. Classify land use and land cover in Abuja using Sentinel-2 satellite imagery.
 2. Analyze land cover changes between 2023 and 2024.
-3. Develop land cover area statistics and a transition matrix.
+3. Produce land cover area statistics and a transition matrix.
 4. Investigate machine learning approaches for modeling land cover transitions.
-5. Produce an exploratory baseline projection of land cover patterns.
-6. Demonstrate a reproducible geospatial workflow using Google Earth Engine.
+5. Produce an exploratory baseline projection for 2026.
+6. Maintain a reproducible geospatial workflow using Google Earth Engine.
 
 ## Study Area
 
 The study focuses on Abuja, Federal Capital Territory, Nigeria.
 
-The area is investigated using satellite imagery and geospatial processing techniques to examine the distribution and transformation of different land cover classes.
-
 ## Land Cover Classes
-
-The project uses the following land cover classes:
 
 | Class | Land Cover |
 |---|---|
@@ -40,76 +31,93 @@ The project uses the following land cover classes:
 | 3 | Water |
 | 4 | Cropland |
 
-## Data Sources
+## Data and Tools
 
-The project uses geospatial data and satellite imagery obtained through online platforms and cloud-based processing tools.
-
-Primary data and tools include:
-
-- Sentinel-2 satellite imagery
+- Sentinel-2 Surface Reflectance Harmonized imagery
 - Google Earth Engine
-- Geographic Information Systems (GIS)
-- Remote sensing indices and spectral information
-- Machine learning algorithms
-- Land cover training and validation samples
+- JavaScript
+- QGIS / GIS
+- Remote sensing indices: NDVI, NDWI, NDBI, BSI, SAVI
+- Random Forest machine learning
+- Land-cover training and validation samples
 
 ## Methodology
 
-The general workflow consists of the following stages:
+The workflow is:
 
-1. Define the study area.
-2. Acquire and filter Sentinel-2 imagery.
-3. Prepare satellite imagery for classification.
-4. Create land cover training samples.
-5. Perform supervised land cover classification.
+1. Define the Abuja study area.
+2. Acquire and filter Sentinel-2 imagery for comparable seasonal periods.
+3. Prepare spectral bands and remote-sensing indices.
+4. Create land-cover training polygons.
+5. Train Random Forest classifiers for 2023 and 2024.
 6. Assess classification accuracy.
-7. Calculate land cover area statistics.
-8. Generate change detection outputs.
-9. Develop a land cover transition matrix.
-10. Explore machine learning-based transition modeling.
-11. Produce an exploratory baseline projection.
+7. Calculate LULC area statistics.
+8. Generate change-detection and transition outputs.
+9. Calculate transition probabilities.
+10. Train and evaluate a transition Random Forest model.
+11. Produce an exploratory 2026 baseline projection.
 
 ## Classification Accuracy
 
-Internal validation was performed using a random training and validation split.
+Two internal validation approaches were implemented.
 
-The observed classification results were:
+### Initial random-split validation
 
 | Year | Overall Accuracy | Kappa |
 |---|---:|---:|
 | 2023 | 97.07% | 0.963 |
 | 2024 | 98.80% | 0.985 |
 
-These results represent the internal validation procedure used in the project. They should not be interpreted as independent spatial validation because the validation samples were drawn from the same general study and sampling framework.
+### Holdout validation
 
-## Change Detection
+| Year | Samples | Training | Validation | Overall Accuracy | Kappa |
+|---|---:|---:|---:|---:|---:|
+| 2023 | 1271 | 1035 | 236 | 97.03% | 0.962 |
+| 2024 | 1271 | 1004 | 267 | 98.13% | 0.976 |
 
-The project includes a comparison of land cover classifications between 2023 and 2024.
+These are internal pixel-based validation results. They should not be interpreted as fully independent spatial or field validation because the samples were derived from the same general training-polygon framework.
 
-The change detection analysis identifies areas that remained unchanged and areas where land cover classes changed between the two periods.
+## Area Statistics
 
-The transition matrix provides information about conversions between land cover categories, including transitions involving built-up areas, bare land, cropland, and vegetation.
+| Year | Class | Area (km²) | Percentage |
+|---|---|---:|---:|
+| 2023 | Built-up | 380.5670 | 10.4323% |
+| 2023 | Vegetation | 15.1942 | 0.4165% |
+| 2023 | Bare land | 2990.8557 | 81.9868% |
+| 2023 | Water | 15.1457 | 0.4152% |
+| 2023 | Cropland | 246.2086 | 6.7492% |
+| 2024 | Built-up | 1928.6668 | 52.8696% |
+| 2024 | Vegetation | 122.8571 | 3.3678% |
+| 2024 | Bare land | 760.1422 | 20.8374% |
+| 2024 | Water | 15.2096 | 0.4169% |
+| 2024 | Cropland | 821.0955 | 22.5083% |
 
-## Exploratory Projection
+The mapped LULC composition changes substantially between the two classified years. These results describe classification outputs and should not by themselves be interpreted as confirmed physical land conversion.
 
-An exploratory baseline projection was developed using land cover transition information and a machine learning-based transition modeling experiment.
+## Transition Analysis
 
-The projection is intended as a preliminary analytical baseline rather than a fully validated prediction of future land cover.
+The transition matrix contains all 25 possible class-to-class transitions between 2023 and 2024.
 
-The approach has limitations related to transition assumptions, spatial allocation, temporal validation, and the availability of independent future reference data.
+The largest mapped transition is **Bare land → Built-up**, with approximately **1,592.82 km²**. The next largest is **Bare land → Cropland**, with approximately **633.73 km²**.
 
-## Technologies Used
+The transition probability matrix is provided alongside the transition-area matrix.
 
-- Google Earth Engine
-- JavaScript
-- Remote Sensing
-- Geographic Information Systems (GIS)
-- Machine Learning
-- Spatial Analysis
-- Sentinel-2 Satellite Imagery
-- Land Use/Land Cover Classification
-- Change Detection
-- Transition Matrix Analysis
+## Transition Machine Learning
+
+A Random Forest transition model was trained using 2023 predictor information and 2024 observed LULC as the target.
+
+- Training samples: 1,982
+- Validation samples: 518
+- Overall accuracy: 70.27%
+- Kappa: 0.628
+
+The transition model is less accurate than the individual-year LULC classifiers and is therefore treated as an exploratory modeling experiment rather than a definitive forecasting model.
+
+## 2026 Baseline Projection
+
+A Markov-style baseline projection was generated from the observed 2023→2024 transition probabilities and spatial allocation.
+
+This is an **exploratory baseline scenario**, not a validated forecast. It should be interpreted as a continuation-of-transition-patterns experiment rather than a guaranteed representation of future land cover.
 
 ## Repository Structure
 
@@ -118,58 +126,40 @@ Abuja-LULC-ML/
 ├── README.md
 ├── gee/
 │   └── Abuja_LULC_Classification.js
-├── results/
-│   ├── accuracy/
-│   ├── area_statistics/
-│   └── transition_matrix/
-├── maps/
-│   ├── LULC_2023/
-│   ├── LULC_2024/
-│   ├── change_detection/
-│   └── prediction/
-├── report/
-│   └── Abuja_LULC_Research_Report.pdf
-└── presentation/
-    └── Abuja_LULC_Project_Presentation.pptx
+└── results/
+    ├── accuracy/
+    │   ├── README.md
+    │   └── LULC_Accuracy_Assessment.csv
+    ├── area_statistics/
+    │   ├── README.md
+    │   └── LULC_Area_Statistics.csv
+    └── transition_matrix/
+        ├── README.md
+        ├── LULC_Transition_Matrix_2023_2024.csv
+        └── LULC_Transition_Probabilities_2023_2024.csv
 ```
-
-The folders listed above represent the intended organization of the project deliverables.
 
 ## Limitations
 
-The current project has several limitations:
-
-- Validation was based on a random pixel holdout rather than fully independent spatial validation.
-- The projection is an exploratory baseline and has not been validated against future observed land cover data.
-- Land cover classification accuracy may be affected by training sample quality, spectral similarity, and image acquisition conditions.
-- Additional temporal datasets would be required for a more robust long-term forecasting model.
-- Further work could incorporate spatially explicit modeling, improved validation, and additional environmental and socioeconomic variables.
+- Validation is based on pixel samples derived from the training-polygon framework rather than independent field observations.
+- The 2026 projection is exploratory and has not been validated against future observed land cover.
+- Classification results can be affected by training-sample quality, spectral similarity, seasonal differences, and image conditions.
+- A longer time series would provide a stronger basis for temporal modeling.
+- Future work can incorporate independent spatial validation and additional explanatory variables such as roads, elevation, population, and protected areas.
 
 ## Future Work
 
-Potential future improvements include:
-
-- Incorporating additional years of Sentinel-2 imagery.
-- Applying independent spatial and temporal validation.
-- Testing advanced machine learning and deep learning models.
-- Including road networks, elevation, population, and other explanatory variables.
-- Developing a spatially explicit land cover prediction model.
-- Creating an interactive web-based visualization dashboard.
-- Comparing model performance using multiple evaluation metrics.
+- Add additional Sentinel-2 years to strengthen temporal analysis.
+- Perform independent spatial and temporal validation.
+- Test additional machine-learning and deep-learning models.
+- Incorporate explanatory variables such as roads, elevation, population, and accessibility.
+- Develop a more spatially explicit prediction framework.
+- Prepare publication-quality maps and research documentation.
+- Develop an interactive visualization dashboard.
 
 ## Project Significance
 
-This project demonstrates the use of remote sensing, GIS, and machine learning for monitoring land cover dynamics in a rapidly developing urban region.
-
-The workflow provides a foundation for further research in:
-
-- GeoAI
-- Environmental monitoring
-- Urban growth analysis
-- Spatial data science
-- Remote sensing
-- Land management
-- Geospatial machine learning
+The project demonstrates an end-to-end GeoAI workflow combining remote sensing, GIS, machine learning, change detection, and transition analysis for land-cover monitoring in Abuja.
 
 ## Author
 
