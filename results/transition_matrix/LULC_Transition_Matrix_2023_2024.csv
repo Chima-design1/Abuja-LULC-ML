@@ -1,0 +1,26 @@
+from_class_code,from_class_name,to_class_code,to_class_name,area_ha,area_km2
+0,Built-up,0,Built-up,31948.2136,319.4821
+0,Built-up,1,Vegetation,113.8893,1.1389
+0,Built-up,2,Bare land,4128.9130,41.2891
+0,Built-up,3,Water,10.3899,0.1039
+0,Built-up,4,Cropland,1855.2982,18.5530
+1,Vegetation,0,Built-up,17.5151,0.1752
+1,Vegetation,1,Vegetation,1110.4435,11.1044
+1,Vegetation,2,Bare land,18.3498,0.1835
+1,Vegetation,3,Water,3.8833,0.0388
+1,Vegetation,4,Cropland,369.2248,3.6922
+2,Bare land,0,Built-up,159282.3937,1592.8239
+2,Bare land,1,Vegetation,4938.3249,49.3832
+2,Bare land,2,Bare land,71488.5526,714.8855
+2,Bare land,3,Water,3.0908,0.0309
+2,Bare land,4,Cropland,63373.2128,633.7321
+3,Water,0,Built-up,37.9467,0.3795
+3,Water,1,Vegetation,14.6727,0.1467
+3,Water,2,Bare land,0.5301,0.0053
+3,Water,3,Water,1445.0887,14.4509
+3,Water,4,Cropland,16.3301,0.1633
+4,Cropland,0,Built-up,1580.6148,15.8061
+4,Cropland,1,Vegetation,6108.3813,61.0838
+4,Cropland,2,Bare land,377.8732,3.7787
+4,Cropland,3,Water,58.5060,0.5851
+4,Cropland,4,Cropland,16495.4808,164.9548
