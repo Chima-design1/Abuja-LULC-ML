@@ -153,15 +153,19 @@ Abuja-LULC-ML/
 
 ## Map Outputs
 
-The repository is organized to contain five principal GeoTIFF outputs:
+The repository contains five principal GeoTIFF products. The GeoTIFFs are the GIS-ready raster data products and can be opened in QGIS, ArcGIS, or other geospatial software.
 
-1. 2023 LULC classification
-2. 2024 LULC classification
-3. 2023–2024 change detection
-4. 2023–2024 transition analysis
-5. 2026 baseline prediction
+1. [2023 LULC classification](maps/LULC_2023/Abuja_LULC_Classification_2023.tif)
+2. [2024 LULC classification](maps/LULC_2024/Abuja_LULC_Classification_2024.tif)
+3. [2023–2024 change detection](maps/change_detection/Abuja_LULC_Change_2023_2024.tif)
+4. [2023–2024 transition analysis](maps/transition_analysis/Abuja_LULC_Transitions_2023_2024.tif)
+5. [2026 baseline prediction](maps/prediction_2026/Abuja_LULC_2026_Baseline_Prediction.tif)
 
-The exported rasters should be stored in the corresponding subdirectories under `maps/`.
+### Map data organization
+
+Each raster is stored in the corresponding subdirectory under `maps/`, alongside a README describing its class coding or interpretation.
+
+> **Viewing note:** GitHub does not provide an interactive GeoTIFF map viewer in the repository interface. Download the GeoTIFF and open it in QGIS, ArcGIS, or another GIS application to view the classified map with its spatial reference and raster values.
 
 ## Limitations
 
