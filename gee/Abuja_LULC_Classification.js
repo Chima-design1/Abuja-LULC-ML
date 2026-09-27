@@ -77,6 +77,22 @@ print('Class codes:', classCodes);
 // Earth Engine's end date is exclusive.
 // ============================================================
 
+function maskSentinelClouds(image) {
+
+  // Use the Scene Classification Layer (SCL) to remove
+  // cloud shadows, medium/high probability clouds,
+  // cirrus and snow/ice before compositing.
+  var scl = image.select('SCL');
+
+  var clearMask = scl.neq(3)   // cloud shadow
+    .and(scl.neq(8))            // medium-probability cloud
+    .and(scl.neq(9))            // high-probability cloud
+    .and(scl.neq(10))           // cirrus
+    .and(scl.neq(11));          // snow/ice
+
+  return image.updateMask(clearMask);
+}
+
 function getSentinelImage(startDate, endDate, yearLabel) {
 
   var collection = ee.ImageCollection(
@@ -89,7 +105,8 @@ function getSentinelImage(startDate, endDate, yearLabel) {
         'CLOUDY_PIXEL_PERCENTAGE',
         40
       )
-    );
+    )
+    .map(maskSentinelClouds);
 
   print(
     'Sentinel-2 image count for ' + yearLabel + ':',
@@ -348,13 +365,17 @@ var trainingRegion = trainingPolygons.geometry();
 
 
 // ============================================================
-// 11. CREATE TRAINING SAMPLES FOR 2023
+// 11. CREATE TEMPORALLY BALANCED TRAINING SAMPLES
 // ============================================================
 //
-// Maximum requested samples:
-// 300 x 5 classes = 1,500 samples
+// The same labeled training polygons are sampled from both years
+// and merged into one training set. A single Random Forest is then
+// used to classify both years. This prevents the model decision
+// boundary from changing between 2023 and 2024 and makes the two
+// maps more directly comparable.
 //
-// geometries: false keeps the FeatureCollection small.
+// Maximum requested samples:
+// 300 x 5 classes x 2 years = 3,000 samples.
 // ============================================================
 
 var trainingImage2023 = classification2023
@@ -367,13 +388,7 @@ var training2023 = trainingImage2023
     region: trainingRegion,
     scale: 10,
     classValues: classCodes,
-    classPoints: [
-      300,
-      300,
-      300,
-      300,
-      300
-    ],
+    classPoints: [300, 300, 300, 300, 300],
     geometries: false,
     tileScale: 8,
     seed: 42
@@ -383,23 +398,6 @@ var training2023 = trainingImage2023
       classification2023.bandNames()
     )
   );
-
-print(
-  'Training pixels 2023:',
-  training2023.size()
-);
-
-print(
-  'Training class distribution 2023:',
-  training2023.aggregate_histogram(
-    'landcover'
-  )
-);
-
-
-// ============================================================
-// 12. CREATE TRAINING SAMPLES FOR 2024
-// ============================================================
 
 var trainingImage2024 = classification2024
   .addBands(trainingLabel);
@@ -411,13 +409,7 @@ var training2024 = trainingImage2024
     region: trainingRegion,
     scale: 10,
     classValues: classCodes,
-    classPoints: [
-      300,
-      300,
-      300,
-      300,
-      300
-    ],
+    classPoints: [300, 300, 300, 300, 300],
     geometries: false,
     tileScale: 8,
     seed: 42
@@ -428,81 +420,93 @@ var training2024 = trainingImage2024
     )
   );
 
+print('Training pixels 2023:', training2023.size());
+print('Training class distribution 2023:',
+  training2023.aggregate_histogram('landcover'));
+
+print('Training pixels 2024:', training2024.size());
+print('Training class distribution 2024:',
+  training2024.aggregate_histogram('landcover'));
+
+
+// ============================================================
+// 12. MERGE TRAINING DATA ACROSS YEARS
+// ============================================================
+
+var commonTraining = training2023
+  .merge(training2024);
+
 print(
-  'Training pixels 2024:',
-  training2024.size()
+  'Combined temporally balanced training samples:',
+  commonTraining.size()
 );
 
 print(
-  'Training class distribution 2024:',
-  training2024.aggregate_histogram(
-    'landcover'
-  )
+  'Combined training class distribution:',
+  commonTraining.aggregate_histogram('landcover')
 );
 
 
 // ============================================================
-// 13. RANDOM FOREST CLASSIFIER FOR 2023
+// 13. TRAIN ONE COMMON RANDOM FOREST CLASSIFIER
 // ============================================================
 
-var classifier2023 =
+var commonClassifier =
   ee.Classifier.smileRandomForest({
-    numberOfTrees: 150,
+    numberOfTrees: 200,
     variablesPerSplit: 4,
     minLeafPopulation: 2,
     bagFraction: 0.7,
-    seed: 42
+    seed: 2026
   })
   .train({
-    features: training2023,
+    features: commonTraining,
     classProperty: 'landcover',
     inputProperties: classification2023.bandNames()
   });
 
 print(
-  'Random Forest classifier 2023:',
-  classifier2023.explain()
+  'Common temporally balanced Random Forest:',
+  commonClassifier.explain()
 );
 
 
 // ============================================================
-// 14. RANDOM FOREST CLASSIFIER FOR 2024
-// ============================================================
-
-var classifier2024 =
-  ee.Classifier.smileRandomForest({
-    numberOfTrees: 150,
-    variablesPerSplit: 4,
-    minLeafPopulation: 2,
-    bagFraction: 0.7,
-    seed: 42
-  })
-  .train({
-    features: training2024,
-    classProperty: 'landcover',
-    inputProperties: classification2024.bandNames()
-  });
-
-print(
-  'Random Forest classifier 2024:',
-  classifier2024.explain()
-);
-
-
-// ============================================================
-// 15. CLASSIFY 2023 AND 2024 IMAGES
+// 14. CLASSIFY 2023 AND 2024 WITH THE SAME MODEL
 // ============================================================
 
 var lulc2023 = classification2023
-  .classify(classifier2023)
+  .classify(commonClassifier)
   .rename('LULC_2023');
 
 var lulc2024 = classification2024
-  .classify(classifier2024)
+  .classify(commonClassifier)
   .rename('LULC_2024');
 
 
 // ============================================================
+// 15. BASIC CLASSIFICATION SANITY CHECK
+// ============================================================
+
+Map.addLayer(
+  image2023,
+  trueColourParameters,
+  'QC - True Colour 2023',
+  false
+);
+
+Map.addLayer(
+  image2024,
+  trueColourParameters,
+  'QC - True Colour 2024',
+  false
+);
+
+print(
+  'QC NOTE:',
+  'Compare the true-colour composites with the classified maps, especially built-up and bare-land areas.'
+);
+
 // 16. DISPLAY CLASSIFIED MAPS
 // ============================================================
 
